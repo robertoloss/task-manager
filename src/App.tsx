@@ -32,11 +32,10 @@ export default function App() {
     <div className="w-screen h-screen flex flex-col items-center justify-center">
 			<div className="kanban-board flex flex-row gap-10">
 				<ul 
-					key={uuid()}
 					className="flex flex-row gap-10"
 					ref={refColumns}>
 					{columnsList.map((column: string[]) => (
-						<Column column={column}/>
+						<Column column={column} key={uuid()}/>
 					))}
 				</ul>
 			</div>
