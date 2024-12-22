@@ -1,45 +1,32 @@
-import { useDragAndDrop } from "@formkit/drag-and-drop/react"
-import Column from "./Column"
-import { v4 as uuid } from "uuid"
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db, Task } from "./models/db";
+import Kanban from "./Kanban";
+import AddTask from './AddTask';
+import { useEffect, useState } from 'react';
 
 
 export default function App() {
+	const columns = useLiveQuery(() => db.tasks.toArray(),[],[]);
+	const [oldCols, setOldCols] = useState<Task[]>([])
 
-	const columns : string[][] = [
-		[
-			"Depeche Mode",
-			"Duran Duran",
-			"Pet Shop Boys",
-			"Kraftwerk",
-			"Tears for Fears",
-			"Spandau Ballet"
-	 ],
-		[
-			"Item"
-		],
-		[
-			"Item"
-		],
+	useEffect(()=>{
+		setOldCols(columns)
+	},[columns])
 
-	]
+	console.log("Columns in app", columns)
 
-	const [refColumns, columnsList] = useDragAndDrop<HTMLUListElement,string[]>(
-		columns,
-		{ group: "todoList"}
-	)
+	if (columns.length === 0 || oldCols.length !== columns.length) {
+		return (
+			<div className="w-screen h-screen flex flex-col items-center justify-center gap-y-10">
+				<AddTask/>
+			</div>
+		)
+	}
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center">
-			<div className="kanban-board flex flex-row gap-10">
-				<ul 
-					className="flex flex-row gap-10"
-					ref={refColumns}>
-					{columnsList.map((column: string[]) => (
-						<Column column={column} key={uuid()}/>
-					))}
-				</ul>
-			</div>
-    </div>
+		<Kanban columns={columns}>
+			<AddTask/>
+		</Kanban>
   )
 }
 
