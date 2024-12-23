@@ -1,16 +1,22 @@
 import Column from "./Column"
 import { v4 as uuid } from "uuid"
-import { Task } from "./models/db";
-import useDnD from "./useDnD";
+import { Column as ColumnType, Task } from "./models/db";
+import { useDragAndDrop } from "@formkit/drag-and-drop/react";
+import { useRef } from "react";
 
 type Props = {
-	columns: Task[]
+	tasks: Task[]
+	columns: ColumnType[]
 	children?: React.ReactNode
 }
-export default function Kanban({ columns, children }: Props) {
-
-	const [refColumns, columnsList] = useDnD({ input: columns }) 
-	console.log("columns in Kanban: ", columnsList[0])
+export default function Kanban({ columns, tasks, children }: Props) {
+	const taskRef = useRef<Task | null>(null)
+	const [refColumns, columnsList] = useDragAndDrop<HTMLUListElement, ColumnType>(
+		columns,
+		{ 
+			group: "todoList" ,
+		},
+	) 
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center gap-y-10">
@@ -18,10 +24,21 @@ export default function Kanban({ columns, children }: Props) {
 			<div className="kanban-board flex flex-row h-full max-h-[400px] gap-10">
 				<ul 
 					className="flex flex-row gap-10"
-					ref={refColumns}>
-					{columnsList.map((column: Task[]) => (
-						<Column column={column} key={uuid()}/>
-					))}
+					ref={refColumns}
+				>
+					{columnsList.map((column: ColumnType) => {
+						const thisColsTasks = tasks.filter(task => task.column_id === column.id)
+
+						return (
+							<Column 
+								columns={columns}
+								taskRef={taskRef}
+								tasks={thisColsTasks}
+								column={column} 
+								key={uuid()}
+							/>
+						)
+					})}
 				</ul>
 			</div>
     </div>

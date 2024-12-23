@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import { db } from "./models/db";
+import { v4 as uuid } from "uuid";
 
 
 export default function AddTask() {
@@ -9,9 +10,13 @@ export default function AddTask() {
 		e.preventDefault()
 		console.log(title)
 		db.tasks.add({
+			id: uuid(),
 			title,
-			deleted: false,
-			date_created: new Date()
+			position: 0,
+			column_id: '356aea27-d14f-4e5c-a2b7-72b19b982630',
+			date_deleted: null,
+			date_created: new Date(),
+			date_modified: new Date()
 		})
 		setTitle('')
 	}

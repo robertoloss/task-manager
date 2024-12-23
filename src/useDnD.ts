@@ -1,16 +1,16 @@
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
-import { Task } from "./models/db"
+import { Column } from "./models/db"
 
 type Props = {
-	input: Task[]
+	input: Column[]
 }
 type Output = [
 	React.RefObject<HTMLUListElement>, 
-	Task[][]
+	Column[]
 ]
 export default function useDnD({ input } : Props): Output {
-	const [refColumns, columnsList] = useDragAndDrop<HTMLUListElement, Task[]>(
-		[input,[],[]],
+	const [refColumns, columnsList] = useDragAndDrop<HTMLUListElement, Column>(
+		input,
 		{ group: "todoList"}
 	)
 	return [refColumns, columnsList]
