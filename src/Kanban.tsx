@@ -1,9 +1,8 @@
 import Column from "./Column"
-import { v4 as uuid } from "uuid"
 import { Column as ColumnType, db, Task } from "./models/db";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 import { useEffect, useRef, useState } from "react";
-import { handleEnd } from "@formkit/drag-and-drop";
+import { handleEnd, NodeRecord } from "@formkit/drag-and-drop";
 
 type Props = {
 	tasks: Task[]
@@ -18,7 +17,7 @@ export default function Kanban({ columns, tasks, children }: Props) {
 		setColumnsState(columns)
 	},[columns])
 
-	const taskRef = useRef<Task | null>(null)
+	const taskRef = useRef<NodeRecord<Task>| null>(null)
 	const [refColumns, columnsList] = useDragAndDrop<HTMLUListElement, ColumnType>(
 		columnsState,
 		{ 
@@ -37,8 +36,9 @@ export default function Kanban({ columns, tasks, children }: Props) {
 			}
 		},
 	) 
-	console.log("Kanban: tasks: ", tasks.map(t => ({name: t.title, pos: t.position, col: t.column_id.slice(0,5)}) ))
-	console.log("Kanban: columns: ", columnsList.map(col => ({ id: col.id.slice(0,5), position: col.position }) ))
+
+	//console.log("Kanban: tasks: ", tasks.map(t => ({name: t.title, pos: t.position, col: t.column_id.slice(0,5)}) ))
+	//console.log("Kanban: columns: ", columnsList.map(col => ({ id: col.id.slice(0,5), position: col.position }) ))
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center gap-y-10">
@@ -58,7 +58,7 @@ export default function Kanban({ columns, tasks, children }: Props) {
 									taskRef={taskRef}
 									tasks={thisColsTasks}
 									column={column} 
-									key={uuid()}
+									key={column.id}
 								/>
 							)
 					})}
