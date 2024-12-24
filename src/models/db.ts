@@ -5,7 +5,7 @@ export type Project = {
   name: string;
   date_created: Date;
   date_modified: Date;
-  date_deleted: Date | null;
+  date_deleted: Date | 'null';
 };
 
 export type Column = {
@@ -15,7 +15,7 @@ export type Column = {
   position: number;
   date_created: Date;
   date_modified: Date;
-  date_deleted: Date | null;
+  date_deleted: Date | 'null';
 };
 
 export type Task = {
@@ -26,7 +26,7 @@ export type Task = {
   description?: string;
   date_created: Date;
   date_modified: Date;
-  date_deleted: Date | null;
+  date_deleted: Date | 'null';
 };
 
 export type ChangeLog = {

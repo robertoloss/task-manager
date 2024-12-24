@@ -1,4 +1,3 @@
-import { state } from "@formkit/drag-and-drop"
 import { db, Task } from "./models/db"
 
 type Props = {
@@ -6,9 +5,8 @@ type Props = {
 }
 export default function TaskCard({ task }: Props) {
 	function deleteTask() {
-		db.tasks.delete(task.id)
+		db.tasks.update(task.id, { date_deleted: new Date})
 	}
-	state.on('dragEnd', ()=> console.log(task))
 	return (
 		<li 
 			className="flex flex-row justify-between p-4 gap-4 bg-gray-500 text-white rounded-md" 

@@ -15,7 +15,7 @@ export async function initializeProject() {
       name: projectName,
       date_created: new Date(),
       date_modified: new Date(),
-			date_deleted: null,
+			date_deleted: 'null',
     });
 
     // Create the columns
@@ -33,7 +33,7 @@ export async function initializeProject() {
         position: column.position,
         date_created: new Date(),
         date_modified: new Date(),
-				date_deleted: null,
+				date_deleted: 'null',
       });
     }
 
