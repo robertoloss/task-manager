@@ -19,14 +19,11 @@ export default function Column({ tasks, column, taskRef }: Props) {
 		onDragstart: (data) => {
 			taskRef.current = data.draggedNode as NodeRecord<Task>
 		},
-		onSort(data) {
-			newOrder.current = data.values as Task[]
-			//console.log("onSort, newOrder", newOrder.current)
-		},
 		handleEnd: (data) => {
 			if ((data?.draggedNode?.data?.value as unknown as { project_id: string | null })?.project_id) {
 				return
 			}
+			console.log("handleEnd list", list)
 			console.log("handleEnd", data)
 			async function updateTask(taskId: string, data: DragState<Task> | SynthDragState<Task>) {
 				if (col?.current?.id) {
@@ -53,7 +50,16 @@ export default function Column({ tasks, column, taskRef }: Props) {
 						.update(newOrder.current[i].id, { position: i })
 				}
 			}
-		}
+			console.log("handleEnd: newOrder", newOrder.current)
+		},
+		onSort(data) {
+			newOrder.current = data.values as Task[];
+			for (let i=0; i<newOrder.current.length; i++) {
+				newOrder.current[i].position = i
+			}
+			console.log("onSort, newOrder", newOrder.current)
+		},
+
 	};
 	const [ refList, list ] = useDragAndDrop<HTMLUListElement, Task>(tasks, config)
 
