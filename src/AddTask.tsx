@@ -1,27 +1,46 @@
 import { FormEvent, useRef, useState } from "react";
 import { db } from "./models/db";
 import { v4 as uuid } from "uuid";
+import { getTasks } from "./models/queries";
+import { useMainStore } from "./zustand/store";
 
-
-export default function AddTask() {
+type Props = {
+  column_id: string
+}
+export default function AddTask({ column_id }: Props) {
 	const refTitle = useRef<HTMLInputElement>(null)
 	const [title, setTitle] = useState("")
-	function addTask(e: FormEvent<HTMLFormElement>) {
+  const { setTasks } = useMainStore()
+
+	async function addTask(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		db.tasks.add({
+
+    await db.tasks
+      .where("column_id")
+      .equals(column_id)
+      .filter(t => t.date_deleted === 'null')
+      .modify(t => { t.position += 1 })
+
+		await db.tasks.add({
 			id: uuid(),
 			title,
 			position: 0,
-			column_id: '356aea27-d14f-4e5c-a2b7-72b19b982630',
+			column_id,
 			date_deleted: 'null',
 			date_created: new Date(),
 			date_modified: new Date()
 		})
+
 		setTitle('')
+    const newTasks = await getTasks()
+    setTasks(newTasks)
 	}
 
 	return (
-		<form onSubmit={addTask}>
+		<form 
+      className="text-black"
+      onSubmit={addTask}
+    >
 			<input
 				onChange={e => setTitle(e.target.value)}
 				value={title}

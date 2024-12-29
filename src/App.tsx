@@ -21,8 +21,7 @@ export default function App() {
 		getData()
 	}, [])
 
-	//console.log({ tasks, columns })
-	if (columns.length === 0 || tasks.length === 0) return null
+	//if (columns.length === 0 || tasks.length === 0) return null
 	
 
   return (
@@ -30,7 +29,6 @@ export default function App() {
 			columns={columns}
 			tasks={tasks}
 		>
-			<AddTask/>
 		</Kanban>
   )
 }

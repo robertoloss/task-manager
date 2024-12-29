@@ -18,12 +18,12 @@ export default function Kanban({ columns, tasks, children }: Props) {
     setColumnList(columns)
   },[columns])
 
-	const taskRef = useRef<NodeRecord<Task>| null>(null)
 	const [refColumns, columnsList, setColumnList] = useDragAndDrop<HTMLUListElement, ColumnType>(
 		columns,
 		{ 
 			group: "Kanban" ,
 			handleEnd(data) {
+        console.log(data)
 				async function sortCols() {
           const updatePromises = columnsList.map(
             (_,i) => db.columns.update(columnsList[i].id, { position: i }) 
@@ -44,7 +44,7 @@ export default function Kanban({ columns, tasks, children }: Props) {
 			{ children }
 			<div className="kanban-board flex flex-row h-full max-h-[400px] gap-10">
 				<ul 
-					className="flex flex-row gap-10"
+					className="flex flex-row gap-10 h-full"
 					ref={refColumns}
 				>
 					{columnsList
