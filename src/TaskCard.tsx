@@ -26,12 +26,13 @@ export default function TaskCard({ task }: Props) {
         border-2 border-gray-500 max-h-[64px] 
       `} 
 		>
-			<h1>
+      {false && <h1>
         <span className="text-yellow-300">
           {task.position}
         </span>
         -{task.title}
-      </h1>
+      </h1>}
+      {true && <h1> {task.title} </h1>}
 			<div
 				className="cursor-pointer hover:text-red-500"
 				onClick={deleteTask}

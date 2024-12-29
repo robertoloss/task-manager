@@ -22,6 +22,7 @@ export default function Kanban({ columns, tasks, children }: Props) {
 		columns,
 		{ 
 			group: "Kanban" ,
+      dragHandle: ".handle",
 			handleEnd(data) {
         console.log(data)
 				async function sortCols() {

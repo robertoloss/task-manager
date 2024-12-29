@@ -15,16 +15,18 @@ export default function AddTask({ column_id }: Props) {
 	async function addTask(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 
-    await db.tasks
+    const tasks = await db.tasks
       .where("column_id")
       .equals(column_id)
       .filter(t => t.date_deleted === 'null')
-      .modify(t => { t.position += 1 })
+      .toArray()
+
+    const numOfTasks = tasks.length
 
 		await db.tasks.add({
 			id: uuid(),
 			title,
-			position: 0,
+			position: numOfTasks,
 			column_id,
 			date_deleted: 'null',
 			date_created: new Date(),

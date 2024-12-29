@@ -6,6 +6,7 @@ import { useEffect } from "react"
 import { useMainStore } from "./zustand/store"
 import { getTasks } from "./models/queries"
 import AddTask from "./AddTask"
+import { cn } from "./lib/utils"
 
 type Props = {
 	tasks: Task[]
@@ -42,29 +43,37 @@ export default function Column({ tasks, column }: Props) {
       }
     }
 	)
+  const minHeight = "min-h-[64px]"
 
 	return (
     <div className="flex flex-col h-fit">
-      <ul 
-        className={`
-          column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] gap-y-2 
-          rounded-lg min-h-[400px] flex-grow
-        `}
+		<ul 
+			className={`
+				column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] gap-y-2 
+				rounded-lg ${minHeight} h-full
+			`}
+		>
+      <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
+      <div className={`flex flex-col`}>
+        {false && <h1>{column.position}-{column.id.slice(0,5)}</h1> }
+        {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
+      </div>
+      <div 
+        className={cn(`flex flex-col gap-y-2 h-full ${minHeight} mb-4`, {
+            'border-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600': taskList.length == 0
+          })}
+        ref={refTaskList}
       >
-        <AddTask column_id={column.id}/>
-        <div 
-          className="flex flex-col gap-y-2 h-full min-h-[400px]"
-          ref={refTaskList}
-        >
-          {column.position}-{column.id.slice(0,5)}
-            {taskList.map((task: Task) => (
-              <TaskCard
-                task={task} 
-                key={task.id}
-              />
-          ))} 
-        </div>
-      </ul>
+          {taskList.length == 0 && "Add task here"}
+          {taskList.map((task: Task) => (
+            <TaskCard
+              task={task} 
+              key={task.id}
+            />
+        ))} 
+      </div>
+			<AddTask column_id={column.id}/>
+		</ul>
     </div>
 	)
 }
