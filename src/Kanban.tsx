@@ -1,8 +1,10 @@
 import Column from "./Column"
 import { Column as ColumnType, db, Task } from "./models/db";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { handleEnd, NodeRecord } from "@formkit/drag-and-drop";
+import { getCols } from "./models/queries";
+import { useMainStore } from "./zustand/store";
 
 type Props = {
 	tasks: Task[]
@@ -10,35 +12,32 @@ type Props = {
 	children?: React.ReactNode
 }
 export default function Kanban({ columns, tasks, children }: Props) {
-	const [ columnsState, setColumnsState] = useState(columns)
-	const newOrder = useRef<ColumnType[]>([])
+	const { setColumns } = useMainStore()
 
-	useEffect(()=>{
-		setColumnsState(columns)
-	},[columns])
+  useEffect(()=>{
+    setColumnList(columns)
+  },[columns])
 
 	const taskRef = useRef<NodeRecord<Task>| null>(null)
-	const [refColumns, columnsList] = useDragAndDrop<HTMLUListElement, ColumnType>(
-		columnsState,
+	const [refColumns, columnsList, setColumnList] = useDragAndDrop<HTMLUListElement, ColumnType>(
+		columns,
 		{ 
 			group: "Kanban" ,
-			onSort(data) {
-				newOrder.current = data.values as ColumnType[]
-			},
 			handleEnd(data) {
 				async function sortCols() {
-					for (let i=0; i<newOrder.current.length; i++) {
-						await db.columns.update(newOrder.current[i].id, { position: i })
-					}
+          const updatePromises = columnsList.map(
+            (_,i) => db.columns.update(columnsList[i].id, { position: i }) 
+          )
+          await Promise.all(updatePromises)
+          const newCols = await getCols()
+          setColumns(newCols)
+
 					if (data.initialParent?.el) handleEnd(data)
 				}
 				sortCols()
 			}
 		},
 	) 
-
-	//console.log("Kanban: tasks: ", tasks.map(t => ({name: t.title, pos: t.position, col: t.column_id.slice(0,5)}) ))
-	//console.log("Kanban: columns: ", columnsList.map(col => ({ id: col.id.slice(0,5), position: col.position }) ))
 
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center gap-y-10">
@@ -50,13 +49,10 @@ export default function Kanban({ columns, tasks, children }: Props) {
 				>
 					{columnsList
 						.map((column: ColumnType) => {
-							const thisColsTasks = tasks.filter(task => task.column_id === column.id)
-
+							const thisColTasks = tasks.filter(task => task.column_id === column.id)
 							return (
 								<Column 
-									columns={columns}
-									taskRef={taskRef}
-									tasks={thisColsTasks}
+									tasks={thisColTasks}
 									column={column} 
 									key={column.id}
 								/>

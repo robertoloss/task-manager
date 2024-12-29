@@ -1,27 +1,32 @@
-import { db } from "./models/db";
-import Kanban from "./Kanban";
 import AddTask from './AddTask';
-import { useLiveQuery } from "dexie-react-hooks";
+import { useEffect } from "react";
+import Kanban from "./Kanban";
+import { getColsAndTasks } from "./models/queries";
+import { useMainStore } from "./zustand/store";
 
 export default function App() {
-	const columns = useLiveQuery(
-		() => db.columns
-			.orderBy('position')
-			.toArray(),
-		[],
-	)
-	const tasks = useLiveQuery(
-		() => db.tasks
-			.where('date_deleted')
-			.equals('null')
-			.sortBy('position'),
-		[],
-	)
+	const {
+		columns,
+		setColumns,
+		tasks,
+		setTasks
+	} = useMainStore()
 
-	if (!columns || !tasks) return null 
+	useEffect(() => {
+		async function getData() {
+			const { tasks, columns } = await getColsAndTasks()
+			setColumns(columns)
+			setTasks(tasks)
+		}
+		getData()
+	}, [])
+
+	//console.log({ tasks, columns })
+	if (columns.length === 0 || tasks.length === 0) return null
+	
 
   return (
-		<Kanban 
+		<Kanban
 			columns={columns}
 			tasks={tasks}
 		>

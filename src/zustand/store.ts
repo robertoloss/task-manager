@@ -1,11 +1,16 @@
 import { create } from 'zustand'
+import { Column, Task } from '../models/db'
 
 type MainStore = {
-	colsTrigger: boolean,
-	setColsTrigger: () => void
+	columns: Column[],
+	setColumns: (cols: Column[]) => void,
+	tasks: Task[],
+	setTasks: (tasks: Task[]) => void
 }
 
 export const useMainStore = create<MainStore>()((set) => ({
-	colsTrigger: false,
-	setColsTrigger: () => set((state) => ({ colsTrigger: !state.colsTrigger }))
+	columns: [],
+	setColumns: (cols) => set({ columns: cols}),
+	tasks: [],
+	setTasks: (tasks) => set({ tasks: tasks })
 }))
