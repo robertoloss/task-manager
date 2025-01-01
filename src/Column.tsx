@@ -23,6 +23,8 @@ export default function Column({ tasks, column }: Props) {
 		tasks, 
     {
       group: "Column",
+      dropZoneClass: "opacity-50",
+      //selectedClass: "border-yellow-500",
       handleEnd(data) {
         //console.log("handleEnd",data)
         async function sortTasks() {
@@ -48,19 +50,18 @@ export default function Column({ tasks, column }: Props) {
 	return (
     <div className="flex flex-col h-fit">
 		<ul 
-			className={`
-				column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] gap-y-2 
+			className={`column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] 
 				rounded-lg ${minHeight} h-full
 			`}
 		>
       <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
-      <div className={`flex flex-col`}>
+      <div className={`flex flex-col my-2`}>
         {false && <h1>{column.position}-{column.id.slice(0,5)}</h1> }
         {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
       </div>
       <div 
-        className={cn(`flex flex-col gap-y-2 h-full ${minHeight} mb-4`, {
-            'border-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600': taskList.length == 0
+        className={cn(`flex flex-col gap-y-2 h-full ${minHeight} pb-4`, {
+            'border-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600 pb-0 mb-[12px]': taskList.length === 0
           })}
         ref={refTaskList}
       >

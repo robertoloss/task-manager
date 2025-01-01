@@ -23,6 +23,7 @@ export default function Kanban({ columns, tasks, children }: Props) {
 		{ 
 			group: "Kanban" ,
       dragHandle: ".handle",
+      dropZoneClass: "opacity-50",
 			handleEnd(data) {
         console.log(data)
 				async function sortCols() {
