@@ -2,7 +2,7 @@ import Column from "./Column"
 import { Column as ColumnType, db, Task } from "./models/db";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 import { useEffect, useRef } from "react";
-import { handleEnd, NodeRecord } from "@formkit/drag-and-drop";
+import { animations, handleEnd, NodeRecord } from "@formkit/drag-and-drop";
 import { getCols } from "./models/queries";
 import { useMainStore } from "./zustand/store";
 
@@ -24,8 +24,10 @@ export default function Kanban({ columns, tasks, children }: Props) {
 			group: "Kanban" ,
       dragHandle: ".handle",
       dropZoneClass: "opacity-50",
+      plugins: [
+        animations()
+      ],
 			handleEnd(data) {
-        console.log(data)
 				async function sortCols() {
           const updatePromises = columnsList.map(
             (_,i) => db.columns.update(columnsList[i].id, { position: i }) 

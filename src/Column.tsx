@@ -1,7 +1,7 @@
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
 import { Column as ColumnType, db, Task } from "./models/db"
 import TaskCard from "./TaskCard"
-import { handleEnd } from "@formkit/drag-and-drop"
+import { animations, handleEnd } from "@formkit/drag-and-drop"
 import { useEffect } from "react"
 import { useMainStore } from "./zustand/store"
 import { getTasks } from "./models/queries"
@@ -23,10 +23,21 @@ export default function Column({ tasks, column }: Props) {
 		tasks, 
     {
       group: "Column",
+      draggable(el) {
+        return el.id !== 'no-drag'
+      },
       dropZoneClass: "opacity-50",
       //selectedClass: "border-yellow-500",
-      handleEnd(data) {
+      handleEnd(data){
         //console.log("handleEnd",data)
+        const optimisticTasks = taskList.map(
+          (task, i) => ({
+            ...task, 
+            position: i, 
+            column_id: column.id
+          })
+        )
+        setTaskList(optimisticTasks)
         async function sortTasks() {
           const updatePromises = taskList.map(
             (_,i) => db.tasks.update(
@@ -45,13 +56,14 @@ export default function Column({ tasks, column }: Props) {
       }
     }
 	)
-  const minHeight = "min-h-[64px]"
+  const minHeight = "min-h-[60px]"
+  const sameLength = tasks.length === taskList.length
 
 	return (
     <div className="flex flex-col h-fit">
 		<ul 
 			className={`column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] 
-				rounded-lg ${minHeight} h-full
+				max-w-[240px] rounded-lg ${minHeight} h-full
 			`}
 		>
       <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
@@ -60,12 +72,19 @@ export default function Column({ tasks, column }: Props) {
         {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
       </div>
       <div 
-        className={cn(`flex flex-col gap-y-2 h-full ${minHeight} pb-4`, {
-            'border-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600 pb-0 mb-[12px]': taskList.length === 0
-          })}
+        className={cn(
+            `flex flex-col gap-y-2 h-full ${minHeight} pb-4`, {
+            'border-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600 mt-2  pb-0 mb-[16px]': taskList.length === 0
+        })}
         ref={refTaskList}
       >
-          {taskList.length == 0 && "Add task here"}
+          <div id="no-drag">
+            {taskList.length == 0 && 
+              <h1>
+                Add task here
+              </h1>
+            }
+          </div>
           {taskList.map((task: Task) => (
             <TaskCard
               task={task} 

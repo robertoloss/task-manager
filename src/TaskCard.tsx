@@ -23,7 +23,7 @@ export default function TaskCard({ task }: Props) {
 		<li 
 			className={`
         flex flex-row flex-grow justify-between p-4 gap-4 bg-gray-500 text-white rounded-md
-        border-2 border-gray-500 max-h-[64px] 
+        border-2 border-gray-500 max-h-[64px] w-full hover:border-gray-200 cursor-pointer 
       `} 
 		>
       {false && <h1>
@@ -32,7 +32,11 @@ export default function TaskCard({ task }: Props) {
         </span>
         -{task.title}
       </h1>}
-      {true && <h1> {task.title} </h1>}
+      {true && 
+        <h1 className="w-full overflow-hidden text-ellipsis whitespace-nowrap"> 
+          {task.title} 
+        </h1>
+      }
 			<div
 				className="cursor-pointer hover:text-red-500"
 				onClick={deleteTask}
