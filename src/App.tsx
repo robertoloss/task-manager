@@ -21,15 +21,8 @@ export default function App() {
 		getData()
 	}, [])
 
-	//if (columns.length === 0 || tasks.length === 0) return null
-	
-
   return (
-		<Kanban
-			columns={columns}
-			tasks={tasks}
-		>
-		</Kanban>
+		<Kanban columns={columns} tasks={tasks}/>
   )
 }
 
