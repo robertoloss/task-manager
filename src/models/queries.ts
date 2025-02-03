@@ -1,4 +1,4 @@
-import { Column, db, Task } from "./db"
+import { Column, db, Project, Task } from "./db"
 
 type Output = {
 	tasks: Task[]
@@ -7,13 +7,14 @@ type Output = {
 
 export async function getColsAndTasks(): Promise<Output> {
 	const columns = await db.columns
-			.orderBy('position')
-			.toArray()
+    .where('date_deleted')
+    .equals('null')
+    .sortBy('position')
 	
 	const tasks = await db.tasks
-			.where('date_deleted')
-			.equals('null')
-			.sortBy('position')
+    .where('date_deleted')
+    .equals('null')
+    .sortBy('position')
 
 	return { 
 		tasks: tasks || [],
@@ -21,19 +22,30 @@ export async function getColsAndTasks(): Promise<Output> {
 	}
 }
 
-export async function getCols(): Promise<Column[]> {
+export async function getProject(projectId: string): Promise<Project[]> {
+  const project = await db.projects
+    .where('id')
+    .equals(projectId)
+    .toArray()
+
+  return project
+}
+
+export async function getCols(projectId: string): Promise<Column[]> {
 	const columns = await db.columns
-			.orderBy('position')
-			.toArray()
+    .where('project_id')
+    .equals(projectId)
+    .filter(col => col.date_deleted === 'null')
+    .sortBy('position')
 	
 	return columns || []
 }
 
 export async function getTasks(): Promise<Task[]> {
 	const tasks = await db.tasks
-			.where('date_deleted')
-			.equals('null')
-			.sortBy('position')
-	
+    .where('date_deleted')
+    .equals('null')
+    .sortBy('position')
+
 	return tasks || []
 }

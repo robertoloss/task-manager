@@ -1,17 +1,19 @@
 import Column from "./Column"
-import { Column as ColumnType, db, Task } from "./models/db";
+import { Column as ColumnType, db, Project, Task } from "./models/db";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 import { useEffect, useRef } from "react";
 import { animations, handleEnd, NodeRecord } from "@formkit/drag-and-drop";
 import { getCols } from "./models/queries";
 import { useMainStore } from "./zustand/store";
+import AddColumn from "./AddColumn";
 
 type Props = {
 	tasks: Task[]
 	columns: ColumnType[]
 	children?: React.ReactNode
+  project: Project
 }
-export default function Kanban({ columns, tasks, children }: Props) {
+export default function Kanban({ columns, tasks, children, project }: Props) {
 	const { setColumns } = useMainStore()
 
   useEffect(()=>{
@@ -33,7 +35,7 @@ export default function Kanban({ columns, tasks, children }: Props) {
             (_,i) => db.columns.update(columnsList[i].id, { position: i }) 
           )
           await Promise.all(updatePromises)
-          const newCols = await getCols()
+          const newCols = await getCols(project.id)
           setColumns(newCols)
 
 					if (data.initialParent?.el) handleEnd(data)
@@ -46,9 +48,9 @@ export default function Kanban({ columns, tasks, children }: Props) {
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center gap-y-10">
 			{ children }
-			<div className="kanban-board flex flex-row h-full max-h-[400px] gap-10">
+			<div className="kanban-board flex flex-row h-full max-h-[400px] gap-4">
 				<ul 
-					className="flex flex-row gap-10 h-full"
+					className="flex flex-row gap-4 h-full"
 					ref={refColumns}
 				>
 					{columnsList
@@ -59,10 +61,12 @@ export default function Kanban({ columns, tasks, children }: Props) {
 									tasks={thisColTasks}
 									column={column} 
 									key={column.id}
+                  project={project}
 								/>
 							)
 					})}
 				</ul>
+        <AddColumn project_id={project.id}/>
 			</div>
     </div>
   )

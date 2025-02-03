@@ -1,19 +1,23 @@
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
-import { Column as ColumnType, db, Task } from "./models/db"
+import { Column as ColumnType, db, Project, Task } from "./models/db"
 import TaskCard from "./TaskCard"
 import { animations, handleEnd } from "@formkit/drag-and-drop"
 import { useEffect } from "react"
 import { useMainStore } from "./zustand/store"
-import { getTasks } from "./models/queries"
+import { getCols, getTasks } from "./models/queries"
 import AddTask from "./AddTask"
 import { cn } from "./lib/utils"
 
 type Props = {
 	tasks: Task[]
 	column: ColumnType
+  project: Project
 }
-export default function Column({ tasks, column }: Props) {
-	const { setTasks } = useMainStore()
+export default function Column({ tasks, column, project }: Props) {
+	const { 
+    setTasks,
+    setColumns
+  } = useMainStore()
 
   useEffect(()=>{
     setTaskList(tasks)
@@ -57,7 +61,21 @@ export default function Column({ tasks, column }: Props) {
     }
 	)
   const minHeight = "min-h-[60px]"
-  const sameLength = tasks.length === taskList.length
+  //const sameLength = tasks.length === taskList.length
+
+	async function deleteColumn() {
+    console.log("deleteColumn")
+		await db.columns.update(column.id, { date_deleted: new Date})
+    await db.columns
+      .where("project_id")
+      .equals(column.project_id)
+      .filter(c => c.position > c.position && c.project_id === project.id)
+      .modify(column => { 
+        column.position -= 1
+      })
+    const newCols = await getCols(project.id)
+    setColumns(newCols)
+	}
 
 	return (
     <div className="flex flex-col h-fit">
@@ -67,9 +85,17 @@ export default function Column({ tasks, column }: Props) {
 			`}
 		>
       <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
-      <div className={`flex flex-col my-2`}>
-        {false && <h1>{column.position}-{column.id.slice(0,5)}</h1> }
-        {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
+      <div className={`flex flex-row py-2 justify-between`}>
+        <>
+          {false && <h1>{column.position}-{column.id.slice(0,5)}</h1> }
+          {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
+        </>
+        <button
+          className="text-white hover:text-red-500"
+          onClick={deleteColumn}
+        >
+          X
+        </button>
       </div>
       <div 
         className={cn(
