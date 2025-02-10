@@ -2,12 +2,13 @@ import { db } from './db';
 import { v4 as uuid } from 'uuid';
 
 export async function initializeProject() {
-  const projectName = 'My First Project';
   
-  const existingProject = await db.projects.where('name').equals(projectName).first();
+  const existingProject = await db.projects.toArray()
 
-  if (!existingProject) {
-    console.log('Project not found. Creating initial project and columns...');
+  if (existingProject.length === 0) {
+    console.log('No project found. Creating initial project and columns...');
+    const projectName = 'My First Project';
+    const projectSlug = 'my-first-project';
 
     const projectId = uuid();
     await db.projects.add({
@@ -16,9 +17,9 @@ export async function initializeProject() {
       date_created: new Date(),
       date_modified: new Date(),
 			date_deleted: 'null',
+      slug:projectSlug 
     });
 
-    // Create the columns
     const columns = [
       { name: 'To Do', position: 1 },
       { name: 'In Progress', position: 2 },

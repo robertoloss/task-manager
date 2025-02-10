@@ -6,6 +6,7 @@ export type Project = {
   date_created: Date;
   date_modified: Date;
   date_deleted: Date | 'null';
+  slug: string;
 };
 
 export type Column = {

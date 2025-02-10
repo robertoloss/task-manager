@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import Kanban from "./Kanban";
-import { getColsAndTasks, getProject } from "./models/queries";
+import { getColsAndTasks, getProject, getProjectsFromSlug } from "./models/queries";
 import { useMainStore } from "./zustand/store";
 import { initializeProject } from "./models/init";
-import { db } from "./models/db";
+import { useParams } from "react-router";
 
 export default function App() {
 	const {
@@ -14,23 +14,19 @@ export default function App() {
     setProject,
     project
 	} = useMainStore()
-
   console.log("App running")
+  const { projectId } = useParams()
 
 	useEffect(() => {
 		async function getData() {
       initializeProject()
-      //const projectArr = await getProject('052a8ebd-cbf3-4291-bb8f-0d39f2a03589')
-      //if (projectArr.length === 0) return
-      //setProject(projectArr[0])
-
-      const firstProject = (await db.projects.toArray())[0]
-      setProject(firstProject)
-        
-
-			const { tasks, columns } = await getColsAndTasks()
-			setColumns(columns)
-			setTasks(tasks)
+      if (projectId) {
+        const loadedProject = await getProjectsFromSlug(projectId) 
+        if (loadedProject) setProject(loadedProject)
+        const { tasks, columns } = await getColsAndTasks(projectId)
+        setColumns(columns)
+        setTasks(tasks)
+      }
 		}
 		getData()
 	}, [])

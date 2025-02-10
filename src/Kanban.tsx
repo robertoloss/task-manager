@@ -46,9 +46,11 @@ export default function Kanban({ columns, tasks, children, project }: Props) {
 	) 
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center gap-y-10">
+    <div className="w-full h-full p-10 bg-zinc-800 text-white flex flex-col  gap-y-10 overflow-auto">
 			{ children }
-			<div className="kanban-board flex flex-row h-full max-h-[400px] gap-4">
+			<div 
+        className="kanban-board flex flex-row h-full max-h-[400px] overgap-4"
+      >
 				<ul 
 					className="flex flex-row gap-4 h-full"
 					ref={refColumns}
