@@ -8,20 +8,18 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarFooter,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { useLoaderData } from "react-router"
-import { Project } from "./models/db"
 import { ProjectModal } from "./ProjectModal"
 import { Button } from "./components/ui/button"
 import { useState } from "react"
+import { useMainStore } from "./zustand/store"
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const projects: Project[] = useLoaderData()
   const [ openModal, setOpenModal ] = useState(false);
+  const { projects } = useMainStore()
   const sharedTw = "bg-zinc-800 text-white"
 
   return (
@@ -35,16 +33,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {projects.map(project => (
-                <SidebarMenuButton>
-                  <a href={project.name}>{project.name}</a>
-                </SidebarMenuButton>
-              ))}
+              {projects
+                .sort((a,b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime())
+                .map(project => (
+                  <a href={project.name} key={project.id}>
+                    <SidebarMenuButton key={project.id}>
+                      <h1>{project.name}</h1>
+                    </SidebarMenuButton>
+                  </a>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className={sharedTw}>
+      <SidebarFooter 
+        className={`p-4 ${sharedTw}`}
+      >
         <ProjectModal
           openModal={openModal}
           setOpenModal={setOpenModal}

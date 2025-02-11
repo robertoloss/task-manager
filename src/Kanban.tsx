@@ -1,7 +1,7 @@
 import Column from "./Column"
 import { Column as ColumnType, db, Project, Task } from "./models/db";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animations, handleEnd, NodeRecord } from "@formkit/drag-and-drop";
 import { getCols } from "./models/queries";
 import { useMainStore } from "./zustand/store";
@@ -15,8 +15,10 @@ type Props = {
 }
 export default function Kanban({ columns, tasks, children, project }: Props) {
 	const { setColumns } = useMainStore()
+  const [ showAddColumn, setShowAddColumn ] = useState(true)
 
   useEffect(()=>{
+    setTimeout(()=>setShowAddColumn(true), 500)
     setColumnList(columns)
   },[columns])
 
@@ -49,7 +51,7 @@ export default function Kanban({ columns, tasks, children, project }: Props) {
     <div className="w-full h-full p-10 bg-zinc-800 text-white flex flex-col  gap-y-10 overflow-auto">
 			{ children }
 			<div 
-        className="kanban-board flex flex-row h-full max-h-[400px] overgap-4"
+        className="kanban-board flex flex-row h-full max-h-[400px] overgap-4 gap-x-4"
       >
 				<ul 
 					className="flex flex-row gap-4 h-full"
@@ -68,7 +70,7 @@ export default function Kanban({ columns, tasks, children, project }: Props) {
 							)
 					})}
 				</ul>
-        <AddColumn project_id={project.id}/>
+        {showAddColumn && <AddColumn project_id={project.id}/>}
 			</div>
     </div>
   )

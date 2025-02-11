@@ -9,6 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { addProject, getProjects } from "./models/queries"
+import { useRef } from "react"
+import { useMainStore } from "./zustand/store"
 
 type Props = {
   openModal: boolean,
@@ -20,6 +23,16 @@ export function ProjectModal({
   setOpenModal,
   children,
 }: Props) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const { setProjects } = useMainStore()
+
+  async function createNewProject() {
+    const projectName = inputRef?.current?.value || null 
+    if (projectName) await addProject(projectName as string)
+    const newProjects = await getProjects()
+    setProjects(newProjects)
+    setOpenModal(false)
+  }
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
@@ -35,24 +48,27 @@ export function ProjectModal({
             Choose the name for your new project
           </DialogDescription>
         </DialogHeader>
-        <form className="flex flex-col py-4 w-full">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Input 
-              name="name-input"
-              id="name" 
-              placeholder="eg: My awesome new project"
-              className="flex flex-row w-full" 
-            />
-          </div>
-        </form>
+          <Input 
+            ref={inputRef}
+            name="name-input"
+            id="name" 
+            placeholder="eg: My awesome new project"
+            className="flex flex-row w-full" 
+          />
         <DialogFooter>
           <Button 
             variant="outline"
             type="button"
+            onClick={()=>setOpenModal(false)}
           >
             Cancel
           </Button>
-          <Button type="submit">Create</Button>
+          <Button 
+            onClick={createNewProject}
+            type="button"
+          >
+            Create
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

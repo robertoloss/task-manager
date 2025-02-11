@@ -4,6 +4,7 @@ import { getColsAndTasks, getProject, getProjectsFromSlug } from "./models/queri
 import { useMainStore } from "./zustand/store";
 import { initializeProject } from "./models/init";
 import { useParams } from "react-router";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function App() {
 	const {
@@ -31,14 +32,29 @@ export default function App() {
 		getData()
 	}, [])
 
-  if (!project) return
+  if (!project || !columns || !tasks) {
+    return <div className="bg-zinc-800 flex flex-col w-full h-full"/>
+  }
 
   return (
-		<Kanban 
-      columns={columns} 
-      tasks={tasks}
-      project={project}
-    />
+    <AnimatePresence>
+      {
+        (project && columns && tasks) &&
+        <motion.div
+          key="kanban"
+          initial={{ opacity: 0,  }}
+          animate={{ opacity: 1,  }}
+          transition={{ ease: "easeIn", duration: .25 }}
+          className="flex flex-col w-full h-full bg-zinc-800"
+        >
+          <Kanban 
+            columns={columns} 
+            tasks={tasks}
+            project={project}
+          />
+        </motion.div>
+      }
+    </AnimatePresence>
   )
 }
 

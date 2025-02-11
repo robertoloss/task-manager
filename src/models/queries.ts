@@ -1,4 +1,5 @@
 import { Column, db, Project, Task } from "./db"
+import { v4 as uuid } from 'uuid'
 
 type Output = {
 	tasks: Task[]
@@ -85,11 +86,11 @@ export async function getProjectsFromSlug(slug: string): Promise<Project | null>
   else return null
 }
 
-export async function addProject(project: Omit<Project, 'slug'>) {
+export async function addProject(projectName: string) {
   const projects = await getProjects()
   const projectsSlug = projects.map(p => p.slug)
 
-  let projectSlug = project.name
+  let projectSlug = projectName
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, "") 
@@ -101,12 +102,13 @@ export async function addProject(project: Omit<Project, 'slug'>) {
     projectSlug = projectSlug + '-' + counter
     counter++
   }
-  const projectToAdd = {
-    ...project,
-    slug: projectSlug
-  }
-
-  const newProject = await db.projects
-    .add(projectToAdd)
-  console.log("Project added: ", newProject)
+  const projectId = uuid();
+  await db.projects.add({
+    id: projectId,
+    name: projectName,
+    date_created: new Date(),
+    date_modified: new Date(),
+    date_deleted: 'null',
+    slug:projectSlug 
+  });
 }
