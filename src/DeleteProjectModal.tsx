@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
+import { deleteProject } from "./models/queries"
 
 type Props = {
   children: React.ReactNode
@@ -17,7 +18,10 @@ type Props = {
 export function DeleteProjectModal({ children, projectId }: Props) {
   const [ open, setOpen ] = useState(false);
 
-  function handleDeletion() {
+  async function handleDeletion() {
+    setOpen(false)
+    console.log("deleting project", projectId)
+    await deleteProject(projectId)
   }
 
   return (

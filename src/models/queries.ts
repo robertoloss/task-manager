@@ -8,7 +8,7 @@ type Output = {
 
 export async function getColsAndTasks(slug: string): Promise<Output> {
   const dataProject = await db.projects
-    .where('name')
+    .where('slug')
     .equals(slug)
     .toArray()
 
@@ -78,7 +78,7 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getProjectsFromSlug(slug: string): Promise<Project | null> {
   const data = await db.projects
-    .where('name')
+    .where('slug')
     .equals(slug)
     .toArray()
 
@@ -111,4 +111,14 @@ export async function addProject(projectName: string) {
     date_deleted: 'null',
     slug:projectSlug 
   });
+}
+
+export async function deleteProject(projectId: string) {
+  console.log("projectId", projectId)
+  await db.projects
+    .where('slug')
+    .equals(projectId)
+    .modify(project => {
+      project.date_deleted = new Date
+  })
 }

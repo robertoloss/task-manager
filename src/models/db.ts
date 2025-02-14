@@ -45,8 +45,8 @@ export const db = new Dexie('Task Manager') as Dexie & {
   change_log: Table<ChangeLog, string>;
 };
 
-db.version(2).stores({
-  projects: 'id, name, date_created, date_modified, date_deleted',
+db.version(3).stores({
+  projects: 'id, name, date_created, date_modified, date_deleted, slug',
   columns: 'id, project_id, name, position, date_created, date_modified, date_deleted',
   tasks: 'id, column_id, title, position, date_created, date_modified, date_deleted',
   change_log: 'id, table, record_id, change_type, date_modified'

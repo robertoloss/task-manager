@@ -41,7 +41,7 @@ export default function Layout() {
                 {projectId}
               </h1>
               <div className="w-fit block group-hover:block">
-                <DeleteProjectModal>
+                <DeleteProjectModal projectId={projectId || ''}>
                   <Trash2 
                     strokeWidth="1.5"
                     width="16"

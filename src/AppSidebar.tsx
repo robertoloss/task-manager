@@ -36,7 +36,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {projects
                 .sort((a,b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime())
                 .map(project => (
-                  <a href={project.name} key={project.id}>
+                  <a href={project.slug} key={project.id}>
                     <SidebarMenuButton key={project.id}>
                       <h1>{project.name}</h1>
                     </SidebarMenuButton>
