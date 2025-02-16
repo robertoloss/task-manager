@@ -9,19 +9,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
-import { deleteProject } from "./models/queries"
 
 type Props = {
   children: React.ReactNode
-  projectId: string
+  thingId: string,
+  title: string,
+  subTitle: string,
+  action: (thingId:string) => void
 }
-export function DeleteProjectModal({ children, projectId }: Props) {
+export function DeleteThingModal({ 
+  children, 
+  thingId,
+  title,
+  subTitle,
+  action
+} : Props) {
   const [ open, setOpen ] = useState(false);
 
   async function handleDeletion() {
     setOpen(false)
-    console.log("deleting project", projectId)
-    await deleteProject(projectId)
+    action(thingId)
   }
 
   return (
@@ -31,9 +38,11 @@ export function DeleteProjectModal({ children, projectId }: Props) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Project</DialogTitle>
+          <DialogTitle>
+            { title }
+          </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this project?
+            { subTitle }
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

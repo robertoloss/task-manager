@@ -1,3 +1,4 @@
+import DeleteThing from "./DeleteThing"
 import { db, Task } from "./models/db"
 import { getTasks } from "./models/queries"
 import { useMainStore } from "./zustand/store"
@@ -7,8 +8,8 @@ type Props = {
 }
 export default function TaskCard({ task }: Props) {
   const { setTasks } = useMainStore()
-	async function deleteTask() {
-		await db.tasks.update(task.id, { date_deleted: new Date})
+	async function deleteTask(taskId: string) {
+		await db.tasks.update(taskId, { date_deleted: new Date})
     await db.tasks
       .where("column_id")
       .equals(task.column_id)
@@ -23,7 +24,7 @@ export default function TaskCard({ task }: Props) {
 		<li 
 			className={`
         flex flex-row flex-grow justify-between p-4 gap-4 bg-gray-500 text-white rounded-md
-        border-2 border-gray-500 max-h-[64px] w-full hover:border-gray-200 cursor-pointer 
+        border-2 border-gray-500 max-h-[64px] w-full hover:border-gray-200 cursor-grab group 
       `} 
 		>
       {false && <h1>
@@ -37,12 +38,14 @@ export default function TaskCard({ task }: Props) {
           {task.title} 
         </h1>
       }
-			<div
-				className="cursor-pointer hover:text-red-500"
-				onClick={deleteTask}
-			>
-				X
-			</div>
+      <div className="hidden group-hover:block">
+        <DeleteThing
+          thingId={task.id}
+          action={deleteTask}
+          title="Delete Task"
+          subTitle="Are you sure you want to delete this task?"
+        />
+      </div>
 		</li>
 	)
 }

@@ -7,6 +7,7 @@ import { useMainStore } from "./zustand/store"
 import { getCols, getTasks } from "./models/queries"
 import AddTask from "./AddTask"
 import { cn } from "./lib/utils"
+import DeleteThing from "./DeleteThing"
 
 type Props = {
 	tasks: Task[]
@@ -63,9 +64,9 @@ export default function Column({ tasks, column, project }: Props) {
   const minHeight = "min-h-[60px]"
   //const sameLength = tasks.length === taskList.length
 
-	async function deleteColumn() {
+	async function deleteColumn(columnId: string) {
     console.log("deleteColumn")
-		await db.columns.update(column.id, { date_deleted: new Date})
+		await db.columns.update(columnId, { date_deleted: new Date})
     await db.columns
       .where("project_id")
       .equals(column.project_id)
@@ -85,17 +86,19 @@ export default function Column({ tasks, column, project }: Props) {
 			`}
 		>
       <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
-      <div className={`flex flex-row py-2 justify-between`}>
+      <div className={`flex group flex-row py-2 justify-between`}>
         <>
           {false && <h1>{column.position}-{column.id.slice(0,5)}</h1> }
           {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
         </>
-        <button
-          className="text-white hover:text-red-500"
-          onClick={deleteColumn}
-        >
-          X
-        </button>
+        <div className="hidden group-hover:block">
+          <DeleteThing
+            thingId={column.id}
+            action={deleteColumn}
+            title="Delete Column"
+            subTitle="Are you sure you want to delete this column?"
+          />
+        </div>
       </div>
       <div 
         className={cn(

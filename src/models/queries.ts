@@ -115,10 +115,11 @@ export async function addProject(projectName: string) {
 
 export async function deleteProject(projectId: string) {
   console.log("projectId", projectId)
-  await db.projects
+  const res = await db.projects
     .where('slug')
     .equals(projectId)
     .modify(project => {
       project.date_deleted = new Date
   })
+  console.log("res", res)
 }

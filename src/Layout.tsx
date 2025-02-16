@@ -4,13 +4,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Outlet, useParams } from "react-router"
+import { Outlet, useNavigate, useParams } from "react-router"
 import { AppSidebar } from "./AppSidebar"
 import { useMainStore } from "./zustand/store"
 import { useEffect } from "react"
-import { getProjects } from "./models/queries"
-import { DeleteProjectModal } from "./DeleteProjectModal"
-import { Trash, Trash2 } from "lucide-react"
+import { deleteProject, getProjects } from "./models/queries"
+import DeleteThing from "./DeleteThing"
 
 export default function Layout() {
   const { projectId } = useParams()
@@ -25,6 +24,16 @@ export default function Layout() {
     }
     getAndSetProjects()
   },[])
+
+  const navigate = useNavigate()
+
+  async function handleDeleteProject(projectId: string) {
+    console.log("deleting project")
+    await deleteProject(projectId)
+    const projectList = await getProjects()
+    setProjects(projectList)
+    navigate('/')
+  }
 
   return (
     <SidebarProvider>
@@ -41,12 +50,12 @@ export default function Layout() {
                 {projectId}
               </h1>
               <div className="w-fit block group-hover:block">
-                <DeleteProjectModal projectId={projectId || ''}>
-                  <Trash2 
-                    strokeWidth="1.5"
-                    width="16"
-                  />
-                </DeleteProjectModal>
+                <DeleteThing
+                  action={handleDeleteProject}
+                  thingId={projectId || ''}
+                  title="Delete Project"
+                  subTitle="Are you sure you want to delete this project?"
+                />
               </div>
             </div>
           </header>
