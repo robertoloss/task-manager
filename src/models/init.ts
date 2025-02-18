@@ -40,7 +40,7 @@ export async function initializeProject() {
 
     console.log('Initial project and columns created.');
   } else {
-    console.log('Project already exists. Skipping initialization.');
+    //console.log('Project already exists. Skipping initialization.');
   }
 }
 

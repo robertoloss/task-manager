@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { addProject, getProjects } from "./models/queries"
 import { useRef } from "react"
 import { useMainStore } from "./zustand/store"
+import { useNavigate } from "react-router"
 
 type Props = {
   openModal: boolean,
@@ -25,13 +26,16 @@ export function ProjectModal({
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { setProjects } = useMainStore()
+  const navigate = useNavigate()
 
   async function createNewProject() {
     const projectName = inputRef?.current?.value || null 
-    if (projectName) await addProject(projectName as string)
+    if (!projectName) return
+    let project = await addProject(projectName as string)
     const newProjects = await getProjects()
     setProjects(newProjects)
     setOpenModal(false)
+    navigate(`/${project.slug}`)
   }
 
   return (
@@ -48,13 +52,18 @@ export function ProjectModal({
             Choose the name for your new project
           </DialogDescription>
         </DialogHeader>
-          <Input 
-            ref={inputRef}
-            name="name-input"
-            id="name" 
-            placeholder="eg: My awesome new project"
-            className="flex flex-row w-full" 
-          />
+          <form onSubmit={(e)=>{
+            e.preventDefault()
+            createNewProject()
+          }}>
+            <Input 
+              ref={inputRef}
+              name="name-input"
+              id="name" 
+              placeholder="eg: My awesome new project"
+              className="flex flex-row w-full" 
+            />
+          </form>
         <DialogFooter>
           <Button 
             variant="outline"

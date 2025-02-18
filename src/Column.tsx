@@ -2,12 +2,13 @@ import { useDragAndDrop } from "@formkit/drag-and-drop/react"
 import { Column as ColumnType, db, Project, Task } from "./models/db"
 import TaskCard from "./TaskCard"
 import { animations, handleEnd } from "@formkit/drag-and-drop"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useMainStore } from "./zustand/store"
-import { getCols, getTasks } from "./models/queries"
+import { getCols, getColsAndTasks, getTasks, updateColumnTitle } from "./models/queries"
 import AddTask from "./AddTask"
 import { cn } from "./lib/utils"
 import DeleteThing from "./DeleteThing"
+import EditableLabel from "./EditableLabel"
 
 type Props = {
 	tasks: Task[]
@@ -15,10 +16,12 @@ type Props = {
   project: Project
 }
 export default function Column({ tasks, column, project }: Props) {
+  const [ optimisticName, updateOptimisticName ] = useState(column.name)
 	const { 
     setTasks,
     setColumns
   } = useMainStore()
+
 
   useEffect(()=>{
     setTaskList(tasks)
@@ -62,7 +65,6 @@ export default function Column({ tasks, column, project }: Props) {
     }
 	)
   const minHeight = "min-h-[60px]"
-  //const sameLength = tasks.length === taskList.length
 
 	async function deleteColumn(columnId: string) {
     console.log("deleteColumn")
@@ -78,6 +80,17 @@ export default function Column({ tasks, column, project }: Props) {
     setColumns(newCols)
 	}
 
+  async function handleColumnUpdate(thingId: string, newLabel: string) {
+    updateOptimisticName(newLabel)
+    await updateColumnTitle({
+      columnId: thingId,
+      newLabel
+    })
+    const { tasks, columns } = await getColsAndTasks(project.slug)
+    setColumns(columns)
+    setTasks(tasks)
+  }
+
 	return (
     <div className="flex flex-col h-fit">
 		<ul 
@@ -86,11 +99,14 @@ export default function Column({ tasks, column, project }: Props) {
 			`}
 		>
       <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
-      <div className={`flex group flex-row py-2 justify-between`}>
-        <>
-          {false && <h1>{column.position}-{column.id.slice(0,5)}</h1> }
-          {true && <h1>{column.name + ` (${taskList.length})`}</h1> }
-        </>
+      <div className={`flex flex-row py-2 justify-between group`}>
+        <div className="flex w-fit">
+          <EditableLabel
+            label={optimisticName}
+            thingId={column.id}
+            action={handleColumnUpdate}
+          />
+        </div>
         <div className="hidden group-hover:block">
           <DeleteThing
             thingId={column.id}

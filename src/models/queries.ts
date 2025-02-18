@@ -1,10 +1,12 @@
 import { Column, db, Project, Task } from "./db"
 import { v4 as uuid } from 'uuid'
+import { generateProjectSlug } from "./utils"
 
 type Output = {
 	tasks: Task[]
 	columns: Column[]
 }
+
 
 export async function getColsAndTasks(slug: string): Promise<Output> {
   const dataProject = await db.projects
@@ -76,7 +78,7 @@ export async function getProjects(): Promise<Project[]> {
   return projects || []
 }
 
-export async function getProjectsFromSlug(slug: string): Promise<Project | null> {
+export async function getProjectFromSlug(slug: string): Promise<Project | null> {
   const data = await db.projects
     .where('slug')
     .equals(slug)
@@ -86,31 +88,21 @@ export async function getProjectsFromSlug(slug: string): Promise<Project | null>
   else return null
 }
 
-export async function addProject(projectName: string) {
-  const projects = await getProjects()
-  const projectsSlug = projects.map(p => p.slug)
 
-  let projectSlug = projectName
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "") 
-    .replace(/\s+/g, "-"); 
 
-  let counter = 1;
-
-  while (projectsSlug.includes(projectSlug)) {
-    projectSlug = projectSlug + '-' + counter
-    counter++
-  }
+export async function addProject(projectName: string): Promise<Project> {
+  const projectSlug = await generateProjectSlug(projectName)
   const projectId = uuid();
-  await db.projects.add({
+  const newProject: Project = {
     id: projectId,
     name: projectName,
     date_created: new Date(),
     date_modified: new Date(),
     date_deleted: 'null',
     slug:projectSlug 
-  });
+  } 
+  await db.projects.add(newProject);
+  return newProject
 }
 
 export async function deleteProject(projectId: string) {
@@ -120,6 +112,44 @@ export async function deleteProject(projectId: string) {
     .equals(projectId)
     .modify(project => {
       project.date_deleted = new Date
-  })
+    })
   console.log("res", res)
+}
+
+export async function updateProjectTitle({
+  projectSlug,
+  newLabel
+}: {
+  projectSlug: string,
+  newLabel: string
+}) 
+  :Promise<Project | null> 
+{
+  const newProjectSlug = await generateProjectSlug(newLabel)
+
+  await db.projects
+    .where('slug')
+    .equals(projectSlug)
+    .modify(project => { 
+      project.name = newLabel,
+      project.slug = newProjectSlug
+    })
+  const updatedProject = getProjectFromSlug(newProjectSlug)
+    
+  return updatedProject
+}
+
+export async function updateColumnTitle({
+  columnId,
+  newLabel
+}: {
+  columnId: string,
+  newLabel: string
+}) {
+  await db.columns
+    .where('id')
+    .equals(columnId)
+    .modify(col => {
+      col.name = newLabel
+    })
 }
