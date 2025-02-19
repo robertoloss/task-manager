@@ -39,8 +39,8 @@ export default function AddTask({ column_id }: Props) {
 	}
   useEffect(() => {
     if (refTitle.current) {
-      refTitle.current.style.height = "auto"; // Reset height
-      refTitle.current.style.height = `${refTitle.current.scrollHeight}px`; // Set new height
+      refTitle.current.style.height = "auto";
+      refTitle.current.style.height = `${refTitle.current.scrollHeight}px`; 
     }
   }, [title]);
 
@@ -50,7 +50,7 @@ export default function AddTask({ column_id }: Props) {
       onSubmit={addTask}
     >
 			<textarea
-        className="flex w-full resize-none h-10 px-2 py-1 rounded-md"
+        className="flex w-full resize-none h-10 px-2 py-1 rounded-md bg-gray-500 text-white focus:outline-none focus:ring-white focus:ring-1"
 				onChange={e => setTitle(e.target.value)}
 				value={title}
 				ref={refTitle}

@@ -1,14 +1,16 @@
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
+import { v4 as uuid } from "uuid"
 import { Column as ColumnType, db, Project, Task } from "./models/db"
 import TaskCard from "./TaskCard"
 import { animations, handleEnd } from "@formkit/drag-and-drop"
-import { useEffect, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { useMainStore } from "./zustand/store"
 import { getCols, getColsAndTasks, getTasks, updateColumnTitle } from "./models/queries"
 import AddTask from "./AddTask"
 import { cn } from "./lib/utils"
 import DeleteThing from "./DeleteThing"
 import EditableLabel from "./EditableLabel"
+import AddTaskOrColumn from "./AddTaskColumn"
 
 type Props = {
 	tasks: Task[]
@@ -91,6 +93,31 @@ export default function Column({ tasks, column, project }: Props) {
     setTasks(tasks)
   }
 
+	async function addTask(e: FormEvent<HTMLFormElement>, title: string) {
+		e.preventDefault()
+
+    const tasks = await db.tasks
+      .where("column_id")
+      .equals(column.id)
+      .filter(t => t.date_deleted === 'null')
+      .toArray()
+
+    const numOfTasks = tasks.length
+
+		await db.tasks.add({
+			id: uuid(),
+			title,
+			position: numOfTasks,
+			column_id: column.id,
+			date_deleted: 'null',
+			date_created: new Date(),
+			date_modified: new Date()
+		})
+
+    const newTasks = await getTasks()
+    setTasks(newTasks)
+	}
+
 	return (
     <div className="flex flex-col h-fit">
 		<ul 
@@ -137,7 +164,7 @@ export default function Column({ tasks, column, project }: Props) {
             />
         ))} 
       </div>
-			<AddTask column_id={column.id}/>
+      <AddTaskOrColumn action={addTask}/>
 		</ul>
     </div>
 	)

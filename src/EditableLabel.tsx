@@ -1,7 +1,6 @@
 import { Pencil } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-
 type Props = {
   label: string,
   thingId: string,
@@ -34,7 +33,7 @@ export default function EditableLabel({
   }
 
   return (
-    <div className="flex flex-row w-full h-fit">
+    <div className="flex flex-row w-full h-fit font-light">
       {!editable &&
         <div 
           className="flex flex-row items-center group cursor-pointer w-fit gap-x-2 hover:opacity-80 transition-all"
