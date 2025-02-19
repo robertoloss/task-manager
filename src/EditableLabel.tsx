@@ -40,7 +40,7 @@ export default function EditableLabel({
           className="flex flex-row items-center group cursor-pointer w-fit gap-x-2 hover:opacity-80 transition-all"
           onClick={()=>{ setEditable(true) }}
         >
-          <h1 className="flex w-fit text-wrap break-words">
+          <h1 className="flex w-fit whitespace-pre text-wrap break-words">
             { label }
           </h1>
           <Pencil 

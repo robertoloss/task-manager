@@ -23,22 +23,14 @@ export default function TaskCard({ task }: Props) {
 	return (
 		<li 
 			className={`
-        flex flex-row flex-grow justify-between p-4 gap-4 bg-gray-500 text-white rounded-md
-        border-2 border-gray-500 max-h-[64px] w-full hover:border-gray-200 cursor-grab group 
+        flex flex-row flex-grow justify-between p-2 gap-2 bg-gray-500 text-white rounded-md
+        border-2 border-gray-500 h-fit w-full hover:border-gray-200 cursor-grab group 
       `} 
 		>
-      {false && <h1>
-        <span className="text-yellow-300">
-          {task.position}
-        </span>
-        -{task.title}
-      </h1>}
-      {true && 
-        <h1 className="w-full overflow-hidden text-ellipsis whitespace-nowrap"> 
-          {task.title} 
-        </h1>
-      }
-      <div className="hidden group-hover:block">
+      <h1 className="w-full font-light text-sm text-ellipsis text-wrap whitespace-pre"> 
+        {task.title} 
+      </h1>
+      <div className="invisible group-hover:visible">
         <DeleteThing
           thingId={task.id}
           action={deleteTask}
