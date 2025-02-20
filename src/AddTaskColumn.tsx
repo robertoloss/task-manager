@@ -1,10 +1,12 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { cn } from "./lib/utils";
 
 type Props = {
   action: (e: FormEvent<HTMLFormElement>, title: string) => Promise<void>
   maxLength?: number
+  column?: boolean
 }
-export default function AddTaskOrColumn({ action, maxLength }: Props) {
+export default function AddTaskOrColumn({ action, maxLength, column }: Props) {
 	const refTitle = useRef<HTMLTextAreaElement>(null)
   const refForm = useRef<HTMLFormElement>(null)
 	const [ title, setTitle ] = useState("")
@@ -72,20 +74,22 @@ export default function AddTaskOrColumn({ action, maxLength }: Props) {
     <>
       {!showForm &&
         <div 
-          className="flex flex-row gap-2 items-center text-white font-light text-sm cursor-pointer rounded-md hover:bg-gray-800 transition-all px-2 py-1"
+          className={cn("mt-2 mr-1 flex flex-row gap-2 items-center text-white font-light text-sm cursor-pointer rounded-md hover:bg-gray-800 transition-all px-2 py-1", {
+            'hover:bg-zinc-600': column
+          })}
           onClick={()=>setShowForm(true)}
         >
           <h1 className="flex h-fit text-xl">
             +
           </h1>
-          <h1 className="">
-            Add
+          <h1 className="flex flex-col w-full">
+            { !column ? "Add new task" : "Add new column"}
           </h1>
         </div>
       }
       {showForm && 
         <form 
-          className="flex flex-col text-black gap-2 text-sm font-light"
+          className="mt-2 mr-1 flex flex-col text-black gap-2 text-sm font-light"
           onSubmit={handleSubmit}
           ref={refForm}
           onKeyDown={e => e.stopPropagation()}
@@ -97,7 +101,12 @@ export default function AddTaskOrColumn({ action, maxLength }: Props) {
             onInput={e => {
               setTitle(e.currentTarget.value)
             }} 
-            onKeyDown={e => e.stopPropagation()}
+            onKeyDown={e => {
+              if (e.key === "Enter" && !e.shiftKey) { 
+                e.preventDefault(); 
+                e.currentTarget.closest("form")?.requestSubmit();
+              }
+            }}
             value={title}
             ref={refTitle}
             name="task"

@@ -1,19 +1,19 @@
 import Column from "./Column"
+import { v4 as uuid } from "uuid";
 import { Column as ColumnType, db, Project, Task } from "./models/db";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
-import { useEffect, useRef, useState } from "react";
-import { animations, handleEnd, NodeRecord } from "@formkit/drag-and-drop";
+import { FormEvent, useEffect, useState } from "react";
+import { animations, handleEnd } from "@formkit/drag-and-drop";
 import { getCols } from "./models/queries";
 import { useMainStore } from "./zustand/store";
-import AddColumn from "./AddColumn";
+import AddTaskOrColumn from "./AddTaskColumn";
 
 type Props = {
 	tasks: Task[]
 	columns: ColumnType[]
-	children?: React.ReactNode
   project: Project
 }
-export default function Kanban({ columns, tasks, children, project }: Props) {
+export default function Kanban({ columns, tasks, project }: Props) {
 	const { setColumns } = useMainStore()
   const [ showAddColumn, setShowAddColumn ] = useState(true)
 
@@ -47,14 +47,39 @@ export default function Kanban({ columns, tasks, children, project }: Props) {
 		},
 	) 
 
+  async function addColumn(e: FormEvent<HTMLFormElement>, title: string) {
+		e.preventDefault()
+    const project_id = project.id
+
+    const columns = await db.columns
+      .where("project_id")
+      .equals(project_id)
+      .filter(t => t.date_deleted === 'null' || !t.date_deleted)
+      .toArray()
+
+    console.log(columns)
+    const numOfCols = columns.length
+
+		await db.columns.add({
+			id: uuid(),
+      name: title,
+			position: numOfCols,
+			project_id,
+			date_deleted: 'null',
+			date_created: new Date(),
+			date_modified: new Date()
+		})
+
+    const newCols = await getCols(project_id)
+    setColumns(newCols)
+	}
+
+
   return (
-    <div className="w-full h-full p-10 bg-zinc-800 text-white flex flex-col  gap-y-10 overflow-auto">
-			{ children }
-			<div 
-        className="kanban-board flex flex-row h-full max-h-[400px] overgap-4 gap-x-4"
-      >
+    <div className="this w-full h-full p-10 custom-scrollbar bg-zinc-800 text-white flex flex-row gap-x-4  
+      min-h-0 gap-y-10 overflow-auto">
 				<ul 
-					className="flex flex-row gap-4 h-full"
+					className="flex flex-row gap-4 h-full flex-auto min-h-0"
 					ref={refColumns}
 				>
 					{columnsList
@@ -70,8 +95,11 @@ export default function Kanban({ columns, tasks, children, project }: Props) {
 							)
 					})}
 				</ul>
-        {showAddColumn && <AddColumn project_id={project.id}/>}
-			</div>
+        {showAddColumn && 
+          <div className="flex flex-col min-w-[200px]">
+            <AddTaskOrColumn action={addColumn} column={true}/>
+          </div>
+        }
     </div>
   )
 }

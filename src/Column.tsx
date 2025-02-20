@@ -2,11 +2,10 @@ import { useDragAndDrop } from "@formkit/drag-and-drop/react"
 import { v4 as uuid } from "uuid"
 import { Column as ColumnType, db, Project, Task } from "./models/db"
 import TaskCard from "./TaskCard"
-import { animations, handleEnd } from "@formkit/drag-and-drop"
+import { handleEnd } from "@formkit/drag-and-drop"
 import { FormEvent, useEffect, useState } from "react"
 import { useMainStore } from "./zustand/store"
 import { getCols, getColsAndTasks, getTasks, updateColumnTitle } from "./models/queries"
-import AddTask from "./AddTask"
 import { cn } from "./lib/utils"
 import DeleteThing from "./DeleteThing"
 import EditableLabel from "./EditableLabel"
@@ -66,7 +65,6 @@ export default function Column({ tasks, column, project }: Props) {
       }
     }
 	)
-  const minHeight = "min-h-[60px]"
 
 	async function deleteColumn(columnId: string) {
     console.log("deleteColumn")
@@ -119,53 +117,53 @@ export default function Column({ tasks, column, project }: Props) {
 	}
 
 	return (
-    <div className="flex flex-col h-fit">
-		<ul 
-			className={`column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] 
-				max-w-[240px] rounded-lg ${minHeight} h-full
-			`}
-		>
-      <div className={`handle flex flex-col w-full h-6 bg-blue-300 rounded-lg cursor-grab`}/>
-      <div className={`flex flex-row py-2 justify-between group`}>
-        <div className="flex w-fit">
-          <EditableLabel
-            label={optimisticName}
-            thingId={column.id}
-            action={handleColumnUpdate}
-          />
-        </div>
-        <div className="hidden group-hover:block">
-          <DeleteThing
-            thingId={column.id}
-            action={deleteColumn}
-            title="Delete Column"
-            subTitle="Are you sure you want to delete this column?"
-          />
-        </div>
-      </div>
-      <div 
-        className={cn(
-            `flex flex-col gap-y-2 h-full ${minHeight} pb-4`, {
-            'border-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600 mt-2  pb-0 mb-[16px]': taskList.length === 0
-        })}
-        ref={refTaskList}
+    <div className="flex flex-col flex-auto">
+      <ul 
+        className={`column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] 
+          max-w-[240px] rounded-lg gap-y-2 min-h-[224px]
+        `}
       >
-          <div id="no-drag">
-            {taskList.length == 0 && 
-              <h1>
-                Add task here
-              </h1>
-            }
-          </div>
-          {taskList.map((task: Task) => (
-            <TaskCard
-              task={task} 
-              key={task.id}
+        <div className={`handle flex flex-col w-full h-6 bg-gray-800 rounded-lg cursor-grab min-h-4 max-h-4`}/>
+        <div className={`flex flex-row py-2 justify-between group`}>
+          <div className="flex w-fit">
+            <EditableLabel
+              label={optimisticName}
+              thingId={column.id}
+              action={handleColumnUpdate}
             />
-        ))} 
-      </div>
-      <AddTaskOrColumn action={addTask}/>
-		</ul>
+          </div>
+          <div className="hidden group-hover:block">
+            <DeleteThing
+              thingId={column.id}
+              action={deleteColumn}
+              title="Delete Column"
+              subTitle="Are you sure you want to delete this column?"
+            />
+          </div>
+        </div>
+        <div 
+          className={cn(
+              `custom-scrollbar-tasks max-h-[calc((100vh-64px)-240px)] flex flex-col relative border-pink-600  h-full flex-grow gap-y-2 pb-4 overflow-auto min-h-0`, {
+              'border-[1px] font-light p-2 border-gray-600 rounded-lg border-dashed items-center justify-center text-gray-600 mt-2 mb-[16px]': taskList.length === 0
+          })}
+          ref={refTaskList}
+        >
+            <div id="no-drag">
+              {taskList.length == 0 && 
+                <h1>
+                  Add task here
+                </h1>
+              }
+            </div>
+            {taskList.map((task: Task) => (
+              <TaskCard
+                task={task} 
+                key={task.id}
+              />
+            ))} 
+        </div>
+        <AddTaskOrColumn action={addTask}/>
+      </ul>
     </div>
 	)
 }

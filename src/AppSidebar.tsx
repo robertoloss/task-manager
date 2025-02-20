@@ -57,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             className="bg-zinc-200 text-black transition-all hover:bg-zinc-100"
             onClick={()=>setOpenModal(true)}
           >
-            New+
+            + Add new project 
           </Button>
         </ProjectModal>
       </SidebarFooter>

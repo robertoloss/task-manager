@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Kanban from "./Kanban";
-import { getColsAndTasks, getProject, getProjectFromSlug } from "./models/queries";
+import { getColsAndTasks, getProjectFromSlug } from "./models/queries";
 import { useMainStore } from "./zustand/store";
 import { initializeProject } from "./models/init";
 import { useParams } from "react-router";
@@ -45,7 +45,7 @@ export default function App() {
           initial={{ opacity: 0,  }}
           animate={{ opacity: 1,  }}
           transition={{ ease: "easeIn", duration: .25 }}
-          className="flex flex-col w-full h-full bg-zinc-800"
+          className="flex flex-col min-h-0 w-full h-full bg-zinc-800"
         >
           <Kanban 
             columns={columns} 

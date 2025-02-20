@@ -63,11 +63,13 @@ export default function Layout() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex flex-row row gap-x-2  w-full justify-between">
               <div className="flex flex-col items-center">
-                <EditableLabel
-                  thingId={projectSlug || ''}
-                  label={projectName}
-                  action={handleUpdateProjectTitle}
-                />
+                {projectName &&
+                  <EditableLabel
+                    thingId={projectSlug || ''}
+                    label={projectName}
+                    action={handleUpdateProjectTitle}
+                  />
+                }
               </div>
               <div className="w-fit cursor-pointer">
                 <DeleteThing

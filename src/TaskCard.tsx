@@ -24,11 +24,11 @@ export default function TaskCard({ task }: Props) {
 		<li 
 			className={`
         flex flex-row flex-grow justify-between p-2 gap-2 bg-gray-500 text-white rounded-md
-        border-2 border-gray-500 h-fit w-full hover:border-gray-200 cursor-grab group 
+        border-2 border-gray-500 w-full h-fit hover:border-gray-200 cursor-grab group items-center
       `} 
 		>
-      <h1 className="w-full font-light text-sm text-ellipsis text-wrap whitespace-pre"> 
-        {task.title} 
+      <h1 className="flex h-fit w-full font-light text-sm text-ellipsis text-wrap whitespace-pre"> 
+        {task.title}
       </h1>
       <div className="invisible group-hover:visible">
         <DeleteThing

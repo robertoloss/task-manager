@@ -31,6 +31,21 @@ export default function EditableLabel({
     setEditable(false)
     action(thingId,newLabel)
   }
+  useEffect(() => {
+    function stopParentKeydown(event: KeyboardEvent) {
+      if (event.key === " ") {
+        event.stopPropagation(); 
+      }
+    }
+    if (editable) {
+      document.addEventListener("keydown", stopParentKeydown, true);
+    } else {
+      document.removeEventListener("keydown", stopParentKeydown, true);
+    }
+    return () => {
+      document.removeEventListener("keydown", stopParentKeydown, true);
+    };
+  }, [editable]);
 
   return (
     <div className="flex flex-row w-full h-fit font-light">
