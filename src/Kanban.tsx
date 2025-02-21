@@ -79,7 +79,7 @@ export default function Kanban({ columns, tasks, project }: Props) {
     <div className="this w-full h-full p-10 custom-scrollbar bg-zinc-800 text-white flex flex-row gap-x-4  
       min-h-0 gap-y-10 overflow-auto">
 				<ul 
-					className="flex flex-row gap-4 h-full flex-auto min-h-0"
+					className="flex flex-row w-fit gap-4 h-full min-h-0"
 					ref={refColumns}
 				>
 					{columnsList

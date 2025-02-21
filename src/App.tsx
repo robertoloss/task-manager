@@ -15,7 +15,7 @@ export default function App() {
     setProject,
     project
 	} = useMainStore()
-  //console.log("App running")
+
   const { projectSlug } = useParams()
 
 	useEffect(() => {

@@ -117,7 +117,7 @@ export default function Column({ tasks, column, project }: Props) {
 	}
 
 	return (
-    <div className="flex flex-col flex-auto">
+    <div className="flex flex-col w-fit">
       <ul 
         className={`column-id--${column.id} text-yellow-400 flex flex-col bg-gray-700  p-4 min-w-[240px] 
           max-w-[240px] rounded-lg gap-y-2 min-h-[224px]
