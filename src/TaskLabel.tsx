@@ -18,7 +18,17 @@ export default function TaskLabel({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(()=>{
-    if (editable) textareaRef.current?.focus()
+    if (editable && textareaRef.current) {
+      textareaRef
+        .current
+        .focus();
+      textareaRef
+        .current
+        .setSelectionRange(
+          inputValue.length, 
+          inputValue.length
+        );
+    }
   },[editable])
 
   function coreAction() {
