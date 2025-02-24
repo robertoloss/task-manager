@@ -21,20 +21,31 @@ export default function EditableLabel({
     if (editable) inputRef.current?.focus()
   },[editable])
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  function coreAction() {
     const newLabel = inputRef.current?.value || '';
-    if (newLabel === "") {
+    if (newLabel === "" || newLabel === label) {
       setEditable(false)
       return
     }
     setEditable(false)
     action(thingId,newLabel)
   }
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    coreAction()
+  }
   useEffect(() => {
     function stopParentKeydown(event: KeyboardEvent) {
-      if (event.key === " ") {
-        event.stopPropagation(); 
+      switch (event.key) {
+        case " ":
+          event.stopPropagation(); 
+          break
+        case "Escape":
+          setEditable(false)
+          break
+        case "Enter":
+          coreAction()
+          break
       }
     }
     if (editable) {
@@ -65,7 +76,7 @@ export default function EditableLabel({
       }
       {editable &&
         <form
-          className="flex flex-row items-center w-full"
+          className="flex flex-row items-center w-fit"
           onSubmit={handleSubmit}
         >
           <input
