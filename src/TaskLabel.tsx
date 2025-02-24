@@ -6,7 +6,7 @@ type Props = {
   thingId: string,
   action: (thingId: string, newLabel: string) => void
 }
-export default function EditableLabel({ 
+export default function TaskLabel({ 
   label, 
   action, 
   thingId,
@@ -15,14 +15,14 @@ export default function EditableLabel({
 ) {
   const [ editable, setEditable ] = useState(false)
   const [ inputValue, setInputValue ] = useState(label) 
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(()=>{
-    if (editable) inputRef.current?.focus()
+    if (editable) textareaRef.current?.focus()
   },[editable])
 
   function coreAction() {
-    const newLabel = inputRef.current?.value || '';
+    const newLabel = textareaRef.current?.value || '';
     if (newLabel === "" || newLabel === label) {
       setEditable(false)
       return
@@ -79,19 +79,18 @@ export default function EditableLabel({
           className="flex flex-row items-center w-full"
           onSubmit={handleSubmit}
         >
-          <input
-            ref={inputRef}
+          <textarea
+            ref={textareaRef}
             onBlur={handleSubmit}
             value={inputValue}
             onChange={(e)=>setInputValue(e.target.value)}
-            type="text"
-            maxLength={18}
+            maxLength={140}
             onKeyDown={(e)=>{
               if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                 e.stopPropagation()
               }
             }}
-            className="bg-transparent outline-none border-none text-opacity-80"
+            className="flex flex-col w-full resize-none bg-transparent outline-none border-none text-opacity-80"
           />
         </form>
       }

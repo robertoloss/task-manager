@@ -153,3 +153,18 @@ export async function updateColumnTitle({
       col.name = newLabel
     })
 }
+
+export async function updateTaskTitle({
+  taskId,
+  newLabel
+}: {
+  taskId: string,
+  newLabel: string
+}) {
+  await db.tasks
+    .where('id')
+    .equals(taskId)
+    .modify(task => {
+      task.title = newLabel
+    })
+}

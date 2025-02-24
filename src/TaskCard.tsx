@@ -2,12 +2,15 @@ import DeleteThing from "./DeleteThing"
 import { db, Task } from "./models/db"
 import { getTasks } from "./models/queries"
 import { useMainStore } from "./zustand/store"
+import TaskModal from "./TaskModal"
+import { useState } from "react"
 
 type Props = {
 	task: Task
 }
 export default function TaskCard({ task }: Props) {
   const { setTasks } = useMainStore()
+  const [ openModal, setOpenModal ] = useState(false)
 	async function deleteTask(taskId: string) {
 		await db.tasks.update(taskId, { date_deleted: new Date})
     await db.tasks
@@ -21,16 +24,23 @@ export default function TaskCard({ task }: Props) {
     setTasks(newTasks)
 	}
 	return (
+    <TaskModal
+      openModal={openModal}
+      setOpenModal={setOpenModal}
+      task={task}
+    >
 		<li 
 			className={`
         flex flex-row flex-grow justify-between p-2 gap-2 bg-gray-500 text-white rounded-md
-        border-2 border-gray-500 w-full h-fit hover:border-gray-200 cursor-grab group items-center
+        border-2 border-gray-500 w-full h-fit hover:border-gray-200 cursor-pointer group items-center
       `} 
 		>
       <h1 className="flex h-fit w-full font-light text-sm text-ellipsis text-wrap whitespace-pre"> 
         {task.title}
       </h1>
-      <div className="invisible group-hover:visible">
+      <div className="invisible group-hover:visible"
+          onClick={(e)=>e.stopPropagation()}
+      >
         <DeleteThing
           thingId={task.id}
           action={deleteTask}
@@ -39,5 +49,7 @@ export default function TaskCard({ task }: Props) {
         />
       </div>
 		</li>
+    </TaskModal>
 	)
+          
 }

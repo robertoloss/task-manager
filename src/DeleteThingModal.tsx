@@ -23,7 +23,8 @@ export function DeleteThingModal({
   title,
   subTitle,
   action
-} : Props) {
+} : Props) 
+{
   const [ open, setOpen ] = useState(false);
 
   async function handleDeletion() {
