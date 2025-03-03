@@ -4,6 +4,7 @@ import { getTasks } from "./models/queries"
 import { useMainStore } from "./zustand/store"
 import TaskModal from "./TaskModal"
 import { useState } from "react"
+import cleanupDeletedItems from "./models/cleanUp"
 
 type Props = {
 	task: Task
@@ -22,6 +23,7 @@ export default function TaskCard({ task }: Props) {
       })
     const newTasks = await getTasks()
     setTasks(newTasks)
+    cleanupDeletedItems()
 	}
 	return (
     <TaskModal
@@ -29,26 +31,27 @@ export default function TaskCard({ task }: Props) {
       setOpenModal={setOpenModal}
       task={task}
     >
-		<li 
-			className={`
-        flex flex-row flex-grow justify-between p-2 gap-2 bg-gray-500 text-white rounded-md
-        border-2 border-gray-500 w-full h-fit hover:border-gray-200 cursor-pointer group items-center
-      `} 
-		>
-      <h1 className="flex h-fit w-full font-light text-sm text-ellipsis text-wrap whitespace-pre"> 
-        {task.title}
-      </h1>
-      <div className="invisible group-hover:visible"
-          onClick={(e)=>e.stopPropagation()}
+      <li 
+        className={`
+          flex flex-row justify-between p-2 gap-2 bg-gray-500 text-white rounded-md
+          border-2 border-gray-500 w-full h-fit hover:border-gray-200 cursor-pointer group items-center text-wrap
+          whitespace-pre-wrap  break-words          
+        `} 
       >
-        <DeleteThing
-          thingId={task.id}
-          action={deleteTask}
-          title="Delete Task"
-          subTitle="Are you sure you want to delete this task?"
-        />
-      </div>
-		</li>
+        <h1 className="flex w-full break-words font-light text-sm" style={{ wordBreak: 'break-all'}}> 
+          {task.title}
+        </h1>
+        <div className="invisible group-hover:visible"
+            onClick={(e)=>e.stopPropagation()}
+        >
+          <DeleteThing
+            thingId={task.id}
+            action={deleteTask}
+            title="Delete Task"
+            subTitle="Are you sure you want to delete this task?"
+          />
+        </div>
+      </li>
     </TaskModal>
 	)
           

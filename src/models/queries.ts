@@ -1,6 +1,7 @@
 import { Column, db, Project, Task } from "./db"
 import { v4 as uuid } from 'uuid'
 import { generateProjectSlug } from "./utils"
+import cleanupDeletedItems from "./cleanUp"
 
 type Output = {
 	tasks: Task[]
@@ -114,6 +115,7 @@ export async function deleteProject(projectId: string) {
       project.date_deleted = new Date
     })
   console.log("res", res)
+  cleanupDeletedItems()
 }
 
 export async function updateProjectTitle({

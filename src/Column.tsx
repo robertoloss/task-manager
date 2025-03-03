@@ -10,6 +10,7 @@ import { cn } from "./lib/utils"
 import DeleteThing from "./DeleteThing"
 import EditableLabel from "./EditableLabel"
 import AddTaskOrColumn from "./AddTaskColumn"
+import cleanupDeletedItems from "./models/cleanUp"
 
 type Props = {
 	tasks: Task[]
@@ -78,6 +79,7 @@ export default function Column({ tasks, column, project }: Props) {
       })
     const newCols = await getCols(project.id)
     setColumns(newCols)
+    cleanupDeletedItems()
 	}
 
   async function handleColumnUpdate(thingId: string, newLabel: string) {

@@ -13,6 +13,9 @@ type MainStore = {
 
   projects: Project[],
   setProjects: (projects: Project[]) => void
+
+  firstTimeModalShown: boolean,
+  setFirstTimeModalShown: (b: boolean) => void
 }
 
 export const useMainStore = create<MainStore>()((set) => ({
@@ -27,4 +30,7 @@ export const useMainStore = create<MainStore>()((set) => ({
 
   projects: [],
   setProjects: (projects) => set({ projects: projects}),
+
+  firstTimeModalShown: false,
+  setFirstTimeModalShown: (bool) => set({ firstTimeModalShown: bool })
 }))

@@ -57,7 +57,6 @@ export default function Kanban({ columns, tasks, project }: Props) {
       .filter(t => t.date_deleted === 'null' || !t.date_deleted)
       .toArray()
 
-    console.log(columns)
     const numOfCols = columns.length
 
 		await db.columns.add({

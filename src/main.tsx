@@ -11,6 +11,10 @@ const router = createBrowserRouter([
     element: <Layout/>,
     children: [
       {
+        index: true,
+        element: <App/>,
+      },
+      {
         path: ':projectSlug',
         element: <App/>,
       }

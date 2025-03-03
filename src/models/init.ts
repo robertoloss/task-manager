@@ -37,10 +37,11 @@ export async function initializeProject() {
 				date_deleted: 'null',
       });
     }
-
     console.log('Initial project and columns created.');
+    return true
   } else {
     console.log('Initialization skipped.');
+    return false
   }
 }
 

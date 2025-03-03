@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { addProject, getProjects } from "./models/queries"
+import { addProject, getColsAndTasks, getProjects } from "./models/queries"
 import { useRef } from "react"
 import { useMainStore } from "./zustand/store"
 import { useNavigate } from "react-router"
@@ -25,7 +25,11 @@ export function ProjectModal({
   children,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { setProjects } = useMainStore()
+  const { 
+    setProjects,
+    setColumns,
+    setTasks
+  } = useMainStore()
   const navigate = useNavigate()
 
   async function createNewProject() {
@@ -36,6 +40,9 @@ export function ProjectModal({
     setProjects(newProjects)
     setOpenModal(false)
     navigate(`/${project.slug}`)
+    const { tasks, columns } = await getColsAndTasks(project.slug)
+    setColumns(columns)
+    setTasks(tasks)
   }
 
   return (

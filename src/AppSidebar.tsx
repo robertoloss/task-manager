@@ -15,11 +15,13 @@ import { ProjectModal } from "./ProjectModal"
 import { Button } from "./components/ui/button"
 import { useState } from "react"
 import { useMainStore } from "./zustand/store"
+import { useNavigate } from "react-router"
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [ openModal, setOpenModal ] = useState(false);
   const { projects } = useMainStore()
+  const navigate = useNavigate()
   const sharedTw = "bg-zinc-800 text-white"
 
   return (
@@ -36,11 +38,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {projects
                 .sort((a,b) => new Date(a.date_created).getTime() - new Date(b.date_created).getTime())
                 .map(project => (
-                  <a href={project.slug} key={project.id}>
-                    <SidebarMenuButton key={project.id}>
-                      <h1>{project.name}</h1>
-                    </SidebarMenuButton>
-                  </a>
+                  <SidebarMenuButton 
+                    key={project.id}
+                    onClick={()=>navigate(`${project.slug}`)}
+                  >
+                    <h1>{project.name}</h1>
+                  </SidebarMenuButton>
                 ))}
             </SidebarMenu>
           </SidebarGroupContent>
