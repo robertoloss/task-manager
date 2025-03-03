@@ -14,6 +14,8 @@ import { useMainStore } from "./zustand/store"
 import EditableLabel from "./EditableLabel"
 import { Task } from "./models/db"
 import TaskLabel from "./TaskLabel"
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+
 
 type Props = {
   openModal: boolean,
@@ -53,20 +55,21 @@ export default function TaskModal({
       <DialogTrigger asChild>
         { children }
       </DialogTrigger>
-      <DialogContent className="flex justify-between flex-col sm:max-w-[425px] min-h-[200px]">
+      <DialogContent 
+        className="[&>button]:hidden gap-y-0 flex justify-between flex-col sm:max-w-[425px] min-h-[224px] space-y-0"
+      >
         <DialogHeader>
-          <DialogDescription>
-            Title
-          </DialogDescription>
-          <DialogTitle>
-            <div className="flex flex-col w-full text-lg font-semibold">
-              <TaskLabel
-                label={optimisticLabel}
-                thingId={task.id}
-                action={handleTaskUpdate}
-              />
-            </div>
-          </DialogTitle>
+          <VisuallyHidden>
+            <DialogTitle>Title</DialogTitle>
+            <DialogDescription>Description</DialogDescription>
+          </VisuallyHidden>
+          <div className="flex flex-col w-full text-lg font-semibold">
+            <TaskLabel
+              label={optimisticLabel}
+              thingId={task.id}
+              action={handleTaskUpdate}
+            />
+          </div>
         </DialogHeader>
         <DialogFooter>
           <Button 
@@ -74,7 +77,7 @@ export default function TaskModal({
             type="button"
             onClick={()=>setOpenModal(false)}
           >
-            Cancel
+            Close
           </Button>
         </DialogFooter>
       </DialogContent>

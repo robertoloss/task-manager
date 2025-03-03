@@ -58,12 +58,15 @@ export function FirstTimeModal({ openFirst, setOpenFirst }: Props) {
               Your data is not sent to an external database—it is stored locally in this browser using <a className="underline cursor-pointer hover:text-blue-700 transition-all" href="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API" target="_blank">IndexedDB</a>. As a result, you can only access your data from this specific browser.
             </h1>
             <h1>
-              This is a minimal and very basic version of the app, which I consider a work in progress. If you have any feedback or feature requests, feel free to reach out at &nbsp;
+              This is a minimal and very basic version of the app, which I consider a work in progress. If you have any feedback or feature requests, feel free to reach out at&nbsp;
               <EmailCopiedPopover 
                 openCopied={openCopied} 
                 setOpenCopied={setOpenCopied}
               >
-                <span className="cursor-pointer hover:text-green-700 transition-all" onClick={handleClickOnEmail}>
+                <span 
+                  className="cursor-pointer hover:text-green-700 transition-all underline" 
+                  onClick={handleClickOnEmail}
+                >
                   robertoloss@gmail.com  
                 </span>
               </EmailCopiedPopover>!

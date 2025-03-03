@@ -62,7 +62,6 @@ export default function App() {
     }
   },[])
 
-  console.log(firstTimeModalShown)
   if (!projectSlug) {
     return (
       <div className="flex flex-col p-10">

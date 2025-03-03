@@ -19,6 +19,10 @@ export default function TaskLabel({
 
   useEffect(()=>{
     if (editable && textareaRef.current) {
+      console.log("here")
+      console.log(inputValue)
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; 
       textareaRef
         .current
         .focus();
@@ -29,7 +33,7 @@ export default function TaskLabel({
           inputValue.length
         );
     }
-  },[editable])
+  },[editable, inputValue])
 
   function coreAction() {
     const newLabel = textareaRef.current?.value || '';
@@ -86,7 +90,7 @@ export default function TaskLabel({
       }
       {editable &&
         <form
-          className="flex flex-row items-center w-full"
+          className="flex flex-row items-center w-full h-full gap-x-2"
           onSubmit={handleSubmit}
         >
           <textarea
@@ -102,6 +106,12 @@ export default function TaskLabel({
             }}
             className="flex flex-col w-full resize-none bg-transparent outline-none border-none text-opacity-80"
           />
+          <div className="invisible">
+            <Pencil 
+              size={12}
+              className="group-hover:visible invisible"
+            />
+          </div>
         </form>
       }
     </div>
